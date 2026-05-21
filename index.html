@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Our Story  </title>
+    <style>
+        /* إعدادات الخلفية العامة والخطوط */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4a0011, #a10023, #4a0011);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* قلوب متحركة في الخلفية */
+        .hearts-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* شاشة القفل بكلمة المرور */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #80001c, #2d000a);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .heart-lock-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #ff4d6d;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .lock-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .lock-subtitle {
+            font-size: 14px;
+            color: #ffb3c1;
+            margin-bottom: 25px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .password-input::placeholder {
+            color: #ccc;
+        }
+
+        .unlock-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #ff4d6d, #c9184a);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .unlock-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* المحتوى الرئيسي للموقع */
+        #main-content {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            z-index: 2;
+            display: none; /* مخفي حتى يتم إدخال الباسورد */
+            margin-bottom: 100px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        /* رسالة الترحيب */
+        .welcome-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #ffe5ec;
+        }
+
+        /* تصميم العداد الزمني */
+        .countdown-title {
+            font-size: 16px;
+            color: #ffb3c1;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .timer-box {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 12px;
+            border-radius: 16px;
+            width: 20%;
+            min-width: 65px;
+        }
+
+        .timer-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            display: block;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: #ffb3c1;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .timer-footer {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #ffe5ec;
+        }
+
+        /* معرض الصور العمودي - صورة واحدة بالسطر */
+        .photo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            width: 100%;
+            height: 300px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .photo-item img:hover {
+            transform: scale(1.05);
+        }
+
+        /* إخفاء شاشة القفل بسلاسة */
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* زر التحكم في الموسيقى العائم في الأسفل */
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 77, 109, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 99;
+            display: none; /* يظهر بعد فتح القفل */
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="song.mp3" loop preload="auto"></audio>
+
+    <button id="music-control" onclick="toggleMusic()">🎵</button>
+
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <div id="lock-screen">
+        <div class="heart-lock-box">
+            <img src="https://via.placeholder.com/150" alt="Avatar" class="avatar">
+            <div class="lock-title">love</div>
+            <div class="lock-subtitle">❤️ my everything</div>
+            
+            <input type="password" id="passwordField" class="password-input" placeholder="أدخل كلمة المرور...">
+            <button class="unlock-btn" onclick="checkPassword()">💕 Unlock 💕</button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        
+        <div class="card">
+            <p class="welcome-text">
+             حبيت اعمله هدية تضل بينا طول العمر ونملاه صورنا وبدي تعرف اني بحبك كتيروبتمنى نكمل سوا ونعيش احلى حياة مع بعض ❤️
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="countdown-title">💖 سوا من 2024-09-09 💖</div>
+            <div class="timer-container">
+                <div class="timer-box">
+                    <span class="timer-number" id="seconds">00</span>
+                    <span class="timer-label">ثانية</span>
+                </div>
+                <div class="timer-box">
+                    <span class="timer-number" id="minutes">00</span>
+                    <span class="timer-label">دقيقة</span>
+                </div>
+                <div class="timer-box">
+                    <span class="timer-number" id="hours">00</span>
+                    <span class="timer-label">ساعة</span>
+                </div>
+                <div class="timer-box">
+                    <span class="timer-number" id="days">00</span>
+                    <span class="timer-label">يوم</span>
+                </div>
+            </div>
+            <div class="timer-footer">كل ثانية بتعدي وانت في قلبي ❤️</div>
+        </div>
+
+        <div class="card">
+            <div class="countdown-title" style="margin-bottom: 10px;"> حكايتنا في صور 📸</div>
+            <div class="photo-list">
+                <div class="photo-item"><img src="https://i.postimg.cc/JzZrywqs/IMG-2026.jpg" alt="صورة 1"></div>
+                <div class="photo-item"><img src="https://i.postimg.cc/6QzNRBGw/IMG-2027.jpg" alt="صورة 2"></div>
+                <div class="photo-item"><img src="https://i.postimg.cc/ZRCK5WsX/IMG-2028.jpg" alt="صورة 3"></div>
+                <div class="photo-item"><img src="https://i.postimg.cc/tTxQcWMY/IMG-2029.jpg" alt="صورة 4"></div>
+                <div class="photo-item"><img src="https://i.postimg.cc/x12vNQ2z/IMG-2030.jpg" alt="صورة 5"></div>
+                <div class="photo-item"><img src="https://i.postimg.cc/MHBBXPrH/IMG-2031.jpg" alt="صورة 6"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('music-control');
+
+       function checkPassword() {
+            const passwordInput = document.getElementById('passwordField').value;
+            
+            // تشغيل الصوت مسبقاً وبسرعة لمخادعة حظر المتصفح
+            music.play().then(() => {
+                if (passwordInput === '1720') { 
+                    document.getElementById('lock-screen').classList.add('hidden');
+                    document.getElementById('main-content').style.display = 'block';
+                    musicBtn.style.display = 'flex'; 
+                    musicBtn.innerText = '⏸️';
+                    startCounter();
+                } else {
+                    music.pause(); // إيقاف الصوت إذا كان الباسورد خطأ
+                    alert('كلمة المرور غير صحيحة! حاول مجدداً ❤️');
+                }
+            })
+            .catch(error => {
+                // إذا ظل المتصفح معترضاً، سيفتح الموقع ويشغل الأغنية فور الضغط على الزر العائم
+                if (passwordInput === '1720') {
+                    document.getElementById('lock-screen').classList.add('hidden');
+                    document.getElementById('main-content').style.display = 'block';
+                    musicBtn.style.display = 'flex'; 
+                    musicBtn.innerText = '▶️';
+                    startCounter();
+                } else {
+                    alert('كلمة المرور غير صحيحة! حاول مجدداً ❤️');
+                }
+            });
+        }
+       
+        function playMusic() {
+            // ⬇️ هنا بتحدد الثانية اللي عايز الأغنية تبدأ منها (مثلاً 75 تعني الدقيقة 1:15)
+            music.currentTime = 75; 
+
+            music.play().then(() => {
+                musicBtn.innerText = '⏸️';
+            }).catch(error => {
+                console.log("المتصفح حظر الصوت، اضغط تشغيل يدوي:", error);
+                musicBtn.innerText = '▶️';
+            });
+        }
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                musicBtn.innerText = '⏸️';
+            } else {
+                music.pause();
+                musicBtn.innerText = '▶️';
+            }
+        }
+
+        function startCounter() {
+            const startDate = new Date(2024, 8, 9, 0, 0, 0); 
+
+            setInterval(() => {
+                const now = new Date();
+                const difference = now - startDate;
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((difference / 1000 / 60) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+
+                document.getElementById('days').innerText = days;
+                document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+                document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            }, 1000);
+        }
+
+        function createBackgroundHearts() {
+            const bg = document.getElementById('heartsBg');
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.style.position = 'absolute';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.opacity = Math.random() * 0.3 + 0.1;
+                heart.style.fontSize = Math.random() * 15 + 10 + 'px';
+                bg.appendChild(heart);
+            }
+        }
+        createBackgroundHearts();
+    </script>
+</body>
+</html>
